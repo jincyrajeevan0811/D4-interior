@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% load d4 %}
+{% block title %}{{ project.title }} | {{ site.company_name }}{% endblock %}
+{% block meta_description %}{{ project.summary }}{% endblock %}
+{% block og_title %}{{ project.title }}{% endblock %}
+{% block og_description %}{{ project.summary }}{% endblock %}
+{% block og_image %}{% with img=project.display_image %}{% if img %}<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ img.url }}">{% endif %}{% endwith %}{% endblock %}
+
+{% block content %}
+<article class="project">
+  <header class="page-head page-head--project">
+    <div class="wrap">
+      <nav class="crumbs" aria-label="Breadcrumb">
+        <a href="{% url 'portfolio:list' %}">Projects</a>
+        <a href="{% url 'portfolio:list' %}?category={{ project.category }}">{{ project.get_category_display }}</a>
+      </nav>
+      <h1 class="display display--page">{{ project.title }}</h1>
+      <p class="lede">{{ project.summary }}</p>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <figure class="project__cover">
+      {% with img=project.display_image %}
+      {% if img %}<img src="{{ img.url }}" alt="{{ project.title }}">
+      {% else %}<div class="pcard__placeholder pcard__placeholder--{{ project.category }}" aria-hidden="true"></div>{% endif %}
+      {% endwith %}
+      {% if project.area_sqft %}<div class="dim"><span>{{ project.area_sqft|inr }} sq ft built-up</span></div>{% endif %}
+    </figure>
+
+    <div class="project__body">
+      <dl class="spec-sheet spec-sheet--facts">
+        <div><dt>Service</dt><dd>{{ project.get_category_display }}</dd></div>
+        <div><dt>Building</dt><dd>{{ project.get_building_type_display }}</dd></div>
+        {% if project.location %}<div><dt>Location</dt><dd>{{ project.location }}</dd></div>{% endif %}
+        {% if project.area_sqft %}<div><dt>Built-up area</dt><dd>{{ project.area_sqft|inr }} sq ft</dd></div>{% endif %}
+        {% if project.plot_size %}<div><dt>Plot</dt><dd>{{ project.plot_size }}</dd></div>{% endif %}
+        {% if project.floors %}<div><dt>Floors</dt><dd>{{ project.floors }}</dd></div>{% endif %}
+        {% if project.duration_months %}<div><dt>Duration</dt><dd>{{ project.duration_months }} month{{ project.duration_months|pluralize }}</dd></div>{% endif %}
+        {% if project.year %}<div><dt>Completed</dt><dd>{{ project.year }}</dd></div>{% endif %}
+        {% if project.client %}<div><dt>Client</dt><dd>{{ project.client }}</dd></div>{% endif %}
+        <div><dt>Status</dt><dd>{{ project.get_status_display }}</dd></div>
+      </dl>
+
+      <div class="prose">
+        {% if project.description %}{{ project.description|linebreaks }}{% endif %}
+        {% if project.scope_list %}
+        <h2 class="h3">What we did</h2>
+        <ul class="ticks">{% for item in project.scope_list %}<li>{{ item }}</li>{% endfor %}</ul>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if project.has_before_after %}
+    <section class="section section--tight" aria-labelledby="ba-title">
+      <h2 class="h2" id="ba-title">Before and after</h2>
+      <p class="muted">Drag the handle to compare.</p>
+      <div class="ba" data-ba style="--pos: 50%">
+        <img src="{{ project.after_image.url }}" alt="After renovation" class="ba__after">
+        <div class="ba__before-wrap"><img src="{{ project.before_image.url }}" alt="Before renovation" class="ba__before"></div>
+        <span class="ba__tag ba__tag--before">Before</span>
+        <span class="ba__tag ba__tag--after">After</span>
+        <span class="ba__handle" aria-hidden="true"></span>
+        <input class="ba__range" type="range" min="0" max="100" value="50" aria-label="Before and after comparison" data-ba-range>
+      </div>
+    </section>
+    {% endif %}
+
+    {% if project.images.all %}
+    <section class="section section--tight" aria-labelledby="gallery-title">
+      <h2 class="h2" id="gallery-title">Photos</h2>
+      <div class="gallery" data-gallery>
+        {% for im in project.images.all %}
+        <button class="gallery__item" type="button" data-full="{{ im.image.url }}" data-caption="{{ im.caption }}">
+          <img src="{{ im.image.url }}" alt="{{ im.caption|default:project.title }}" loading="lazy">
+        </button>
+        {% endfor %}
+      </div>
+    </section>
+    {% endif %}
+
+    {% if testimonial %}
+    <blockquote class="voice voice--wide">
+      <p>{{ testimonial.quote }}</p>
+      <footer><b>{{ testimonial.client_name }}</b>{% if testimonial.detail %}<span>{{ testimonial.detail }}</span>{% endif %}</footer>
+    </blockquote>
+    {% endif %}
+
+    <div class="project__cta">
+      <p>Planning something similar?</p>
+      <a class="btn btn--primary" href="{% url 'inquiries:quote' %}?service={{ project.category }}&building={{ project.building_type }}{% if project.area_sqft %}&area={{ project.area_sqft }}{% endif %}">Request a quote for a project like this</a>
+    </div>
+  </div>
+</article>
+
+{% if related %}
+<section class="section">
+  <div class="wrap">
+    <h2 class="h2">More {{ project.get_category_display|lower }} projects</h2>
+    <div class="work-grid work-grid--even">
+      {% for p in related %}{% include "partials/project_card.html" with p=p %}{% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<dialog class="lightbox" data-lightbox aria-label="Photo viewer">
+  <form method="dialog"><button class="lightbox__close" aria-label="Close">×</button></form>
+  <button class="lightbox__nav lightbox__nav--prev" type="button" data-lb-prev aria-label="Previous photo">‹</button>
+  <figure><img alt="" data-lb-img><figcaption data-lb-cap></figcaption></figure>
+  <button class="lightbox__nav lightbox__nav--next" type="button" data-lb-next aria-label="Next photo">›</button>
+</dialog>
+{% endblock %}

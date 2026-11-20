@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Page not found | {{ site.company_name }}{% endblock %}
+{% block final_cta %}{% endblock %}
+{% block content %}
+<section class="section thanks">
+  <div class="wrap thanks__inner">
+    <div class="dim dim--404" aria-hidden="true"><span>404</span></div>
+    <h1 class="display display--page">This page isn't on the plan.</h1>
+    <p class="lede">The link may be old or mistyped. Try one of these instead.</p>
+    <div class="btn-row">
+      <a class="btn btn--primary" href="{% url 'core:home' %}">Home page</a>
+      <a class="btn btn--line" href="{% url 'portfolio:list' %}">Projects</a>
+      <a class="btn btn--line" href="{% url 'inquiries:contact' %}">Contact</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

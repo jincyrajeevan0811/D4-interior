@@ -1,0 +1,22 @@
+{% load d4 %}<article class="pcard{% if large %} pcard--large{% endif %}" data-category="{{ p.category }}"{% if hide %} hidden{% endif %}>
+  <a class="pcard__link" href="{{ p.get_absolute_url }}">
+    <figure class="pcard__media">
+      {% with img=p.display_image %}
+      {% if img %}
+      <img src="{{ img.url }}" alt="{{ p.title }}" loading="lazy">
+      {% else %}
+      <div class="pcard__placeholder pcard__placeholder--{{ p.category }}" aria-hidden="true"></div>
+      {% endif %}
+      {% endwith %}
+      {% if p.status == "ongoing" %}<span class="pcard__status">In progress</span>{% endif %}
+    </figure>
+    {% if p.area_sqft %}
+    <div class="dim" aria-label="Built-up area {{ p.area_sqft|inr }} square feet"><span>{{ p.area_sqft|inr }} sq ft</span></div>
+    {% endif %}
+    <div class="pcard__body">
+      <p class="pcard__kind pcard__kind--{{ p.category }}">{{ p.get_category_display }}</p>
+      <h3 class="pcard__title">{{ p.title }}</h3>
+      <p class="pcard__meta">{{ p.get_building_type_display }}{% if p.location %}, {{ p.location }}{% endif %}{% if p.year %} ({{ p.year }}){% endif %}</p>
+    </div>
+  </a>
+</article>

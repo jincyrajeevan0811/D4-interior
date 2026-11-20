@@ -1,0 +1,26 @@
+{% if steps %}
+<section class="section process" aria-labelledby="process-title">
+  <div class="wrap process__grid">
+    <div class="process__intro">
+      <h2 class="h2" id="process-title">{{ process_title|default:"How a turnkey build runs" }}</h2>
+      <p class="lede">One team handles every stage, from the first soil test to the day you get the keys. You get a single contract, a single point of contact and stage-wise billing.</p>
+      <a class="btn btn--line" href="{% url 'inquiries:quote' %}?service=construction">Start with a site visit</a>
+    </div>
+    <div class="process__track" data-process>
+    <span class="process__rail" aria-hidden="true"><span class="process__fill" data-process-fill></span></span>
+    <ol class="process__list">
+      {% for step in steps %}
+      <li class="process__step" data-process-step>
+        <span class="process__num" aria-hidden="true">{{ forloop.counter|stringformat:"02d" }}</span>
+        <div>
+          <h3>{{ step.title }}</h3>
+          <p>{{ step.description }}</p>
+          {% if step.duration_hint %}<p class="process__time">Usually {{ step.duration_hint }}</p>{% endif %}
+        </div>
+      </li>
+      {% endfor %}
+    </ol>
+    </div>
+  </div>
+</section>
+{% endif %}

@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Services | {{ site.company_name }}{% endblock %}
+{% block content %}
+<header class="page-head">
+  <div class="wrap">
+    <h1 class="display display--page">Build, design or rework.</h1>
+    <p class="lede">Choose the whole job or one part of it. Every service starts with a free site visit and a written, itemised quote.</p>
+  </div>
+</header>
+
+<div class="wrap">
+  {% for s in services %}
+  <section class="svc-block" id="{{ s.kind }}" aria-labelledby="svc-{{ s.pk }}">
+    <div class="svc-block__media">
+      {% if s.image %}<img src="{{ s.image.url }}" alt="" loading="lazy">
+      {% else %}<div class="svc-block__art svc-block__art--{{ s.kind }}">{% include "partials/service_icon.html" with kind=s.kind %}</div>{% endif %}
+    </div>
+    <div class="svc-block__body">
+      <h2 class="h2" id="svc-{{ s.pk }}">{{ s.title }}</h2>
+      <p class="lede">{{ s.summary }}</p>
+      {% if s.includes_list %}
+      <ul class="ticks">
+        {% for item in s.includes_list|slice:":6" %}<li>{{ item }}</li>{% endfor %}
+      </ul>
+      {% endif %}
+      {% if s.suited_for %}<p class="muted">Suited for {{ s.suited_for|lower }}.</p>{% endif %}
+      <div class="btn-row">
+        <a class="btn btn--primary" href="{{ s.get_absolute_url }}">{{ s.title }} details</a>
+        <a class="btn btn--line" href="{% url 'portfolio:list' %}?category={{ s.kind }}">See examples</a>
+      </div>
+    </div>
+  </section>
+  {% endfor %}
+</div>
+
+{% include "partials/process.html" %}
+{% endblock %}

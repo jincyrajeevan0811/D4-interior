@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% load d4 %}
+{% block title %}Get a quote | {{ site.company_name }}{% endblock %}
+{% block meta_description %}Tell us about your plot or space and get a quote for construction, interiors or renovation.{% endblock %}
+{% block final_cta %}{% endblock %}
+{% block content %}
+<header class="page-head page-head--compact">
+  <div class="wrap">
+    <h1 class="display display--page">Tell us about your project</h1>
+    <p class="lede">Three short steps. We call back within one working day to arrange a free site visit.</p>
+  </div>
+</header>
+
+<section class="section section--flush-top">
+  <div class="wrap quote-layout">
+    <form class="quote-form" method="post" enctype="multipart/form-data" novalidate data-steps>
+      {% csrf_token %}
+      <div class="visually-hidden" aria-hidden="true">{{ form.website }}</div>
+      {{ form.estimate_low }}{{ form.estimate_high }}
+
+      <ol class="stepper" aria-label="Form progress">
+        <li data-step-tab="0" aria-current="step"><span>1</span>Project</li>
+        <li data-step-tab="1"><span>2</span>Plot and budget</li>
+        <li data-step-tab="2"><span>3</span>Your details</li>
+      </ol>
+
+      {% if form.non_field_errors or form.errors %}
+      <div class="form-alert" role="alert">Some details need fixing. The fields marked in red explain what to change.</div>
+      {% endif %}
+
+      <fieldset class="step" data-step="0">
+        <legend class="h3">What are we building?</legend>
+        <div class="field field--wide{% if form.service.errors %} field--error{% endif %}">
+          <span class="label">{{ form.service.label }} <span class="req" aria-hidden="true">*</span></span>
+          <div class="option-cards">
+            {% for radio in form.service %}
+            <label class="option-card">
+              {{ radio.tag }}
+              <span class="option-card__body">
+                {% include "partials/service_icon.html" with kind=radio.data.value %}
+                <b>{{ radio.choice_label }}</b>
+              </span>
+            </label>
+            {% endfor %}
+          </div>
+          {% for e in form.service.errors %}<p class="field__error">{{ e }}</p>{% endfor %}
+        </div>
+        <div class="field-grid">
+          {% include "partials/field.html" with f=form.building_type %}
+          {% include "partials/field.html" with f=form.finish_tier %}
+          {% include "partials/field.html" with f=form.approved_plan wide=True %}
+        </div>
+      </fieldset>
+
+      <fieldset class="step" data-step="1">
+        <legend class="h3">Where is it, and how big?</legend>
+        <div class="field-grid">
+          {% include "partials/field.html" with f=form.plot_location wide=True %}
+          {% include "partials/field.html" with f=form.plot_size %}
+          {% include "partials/field.html" with f=form.built_up_area %}
+          {% include "partials/field.html" with f=form.floors %}
+          {% include "partials/field.html" with f=form.budget %}
+          {% include "partials/field.html" with f=form.timeline wide=True %}
+          {% include "partials/field.html" with f=form.message wide=True %}
+          <div class="field field--wide{% if form.attachment.errors %} field--error{% endif %}">
+            <label for="{{ form.attachment.id_for_label }}">{{ form.attachment.label }}</label>
+            <label class="dropzone" data-dropzone>
+              {{ form.attachment }}
+              <span class="dropzone__text" data-dropzone-text>Drop a file here or <u>browse</u>. PDF, image or CAD file, up to 10 MB.</span>
+            </label>
+            {% for e in form.attachment.errors %}<p class="field__error">{{ e }}</p>{% endfor %}
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="step" data-step="2">
+        <legend class="h3">How do we reach you?</legend>
+        <div class="field-grid">
+          {% include "partials/field.html" with f=form.name %}
+          {% include "partials/field.html" with f=form.phone %}
+          {% include "partials/field.html" with f=form.email wide=True %}
+          <div class="field field--wide">
+            <span class="label">{{ form.preferred_contact.label }}</span>
+            <div class="choice-row">
+              {% for radio in form.preferred_contact %}
+              <label class="choice">{{ radio.tag }}<span>{{ radio.choice_label }}</span></label>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+        <p class="hint">We only use your details to reply about this project.</p>
+      </fieldset>
+
+      <div class="step-nav">
+        <button class="btn btn--line" type="button" data-step-prev hidden>Back</button>
+        <button class="btn btn--primary" type="button" data-step-next hidden>Continue</button>
+        <button class="btn btn--primary" type="submit" data-step-submit>Send my request</button>
+      </div>
+    </form>
+
+    <aside class="quote-aside">
+      {% if form.initial.estimate_low %}
+      <div class="quote-aside__estimate">
+        <p class="muted">Your estimate</p>
+        <p class="quote-aside__figure">₹{{ form.initial.estimate_low|inr }} to ₹{{ form.initial.estimate_high|inr }}</p>
+        <p class="muted">We will confirm this after a site visit.</p>
+      </div>
+      {% endif %}
+      <h2 class="h3">What happens next</h2>
+      <ol class="next-steps">
+        <li>We call you within one working day to understand the brief.</li>
+        <li>An engineer visits the plot or space, free of charge.</li>
+        <li>You get an itemised quote with drawings and a timeline.</li>
+      </ol>
+      {% if site.phone or site.whatsapp_number %}
+      <p class="quote-aside__direct">Rather talk now?
+        {% if site.phone %}<a href="tel:{{ site.phone_link }}">Call {{ site.phone }}</a>{% endif %}
+        {% if site.whatsapp_number %}<a href="https://wa.me/{{ site.whatsapp_number }}" target="_blank" rel="noopener">Message on WhatsApp</a>{% endif %}
+      </p>
+      {% endif %}
+    </aside>
+  </div>
+</section>
+{% endblock %}

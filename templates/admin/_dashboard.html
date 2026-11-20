@@ -1,0 +1,51 @@
+<section class="d4-dash" aria-label="Overview">
+  <div class="d4-dash__row">
+    <a class="d4-tile d4-tile--hot" href="{% url 'admin:inquiries_inquiry_changelist' %}?status__exact=new">
+      <strong>{{ new_count }}</strong><span>New enquiries to answer</span>
+    </a>
+    <a class="d4-tile" href="{% url 'admin:inquiries_inquiry_changelist' %}?follow_up=due">
+      <strong>{{ due_count }}</strong><span>Follow-ups due</span>
+    </a>
+    <div class="d4-tile"><strong>{{ week_count }}</strong><span>Enquiries in the last 7 days</span></div>
+    <div class="d4-tile"><strong>{{ month_count }}</strong><span>Enquiries this month</span></div>
+    <a class="d4-tile" href="{% url 'admin:portfolio_project_changelist' %}">
+      <strong>{{ project_count }}</strong><span>Projects live{% if hidden_count %} ({{ hidden_count }} hidden){% endif %}</span>
+    </a>
+  </div>
+
+  <div class="d4-dash__cols">
+    <div class="d4-panel d4-panel--wide">
+      <h2>Latest enquiries</h2>
+      {% if recent %}
+      <table class="d4-recent">
+        {% for i in recent %}
+        <tr>
+          <td><a href="{% url 'admin:inquiries_inquiry_change' i.pk %}">{{ i.name }}</a><small>{{ i.get_service_display|default:i.get_source_display }}{% if i.plot_location %}, {{ i.plot_location|truncatechars:28 }}{% endif %}</small></td>
+          <td class="d4-recent__when">{{ i.created_at|timesince }} ago</td>
+          <td><span class="d4-pill d4-pill--{{ i.status }}">{{ i.get_status_display }}</span></td>
+        </tr>
+        {% endfor %}
+      </table>
+      {% else %}
+      <p class="d4-empty">No enquiries yet. They appear here as soon as someone sends the quote or contact form.</p>
+      {% endif %}
+    </div>
+    <div class="d4-panel">
+      <h2>Enquiry pipeline</h2>
+      <ol class="d4-pipeline">
+        {% for label, count, value in pipeline %}
+        <li><a href="{% url 'admin:inquiries_inquiry_changelist' %}?status__exact={{ value }}"><span>{{ label }}</span><b>{{ count }}</b></a></li>
+        {% endfor %}
+      </ol>
+    </div>
+    <div class="d4-panel">
+      <h2>Portfolio</h2>
+      <ul class="d4-pipeline">
+        {% for label, count, value in by_category %}
+        <li><a href="{% url 'admin:portfolio_project_changelist' %}?category__exact={{ value }}"><span>{{ label }}</span><b>{{ count }}</b></a></li>
+        {% endfor %}
+      </ul>
+      <p><a class="button" href="{% url 'admin:portfolio_project_add' %}">Add a project</a></p>
+    </div>
+  </div>
+</section>

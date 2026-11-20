@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Projects | {{ site.company_name }}{% endblock %}
+{% block meta_description %}Homes, hospitals, commercial buildings, interiors and renovations completed by {{ site.company_name }}.{% endblock %}
+{% block content %}
+<header class="page-head">
+  <div class="wrap">
+    <h1 class="display display--page">Projects</h1>
+    <p class="lede">Full builds, interiors and renovations we have delivered. Filter by the kind of work you are planning.</p>
+  </div>
+</header>
+
+<section class="section section--flush-top">
+  <div class="wrap">
+    <nav class="filter" aria-label="Filter projects" data-filter>
+      {% for value, label, count in filters %}
+      <a class="filter__btn" href="{% url 'portfolio:list' %}{% if value %}?category={{ value }}{% endif %}"
+         data-filter-value="{{ value }}" {% if value == active %}aria-current="true"{% endif %}>
+        {{ label }} <span class="filter__count">{{ count }}</span>
+      </a>
+      {% endfor %}
+    </nav>
+
+    {% if projects %}
+    <div class="work-grid work-grid--even" data-filter-grid>
+      {% for p in projects %}
+        {% if active and p.category != active %}
+          {% include "partials/project_card.html" with p=p hide=True %}
+        {% else %}
+          {% include "partials/project_card.html" with p=p %}
+        {% endif %}
+      {% endfor %}
+    </div>
+    <p class="empty" data-filter-empty hidden>No projects in this category yet. <a href="{% url 'portfolio:list' %}">Show all work</a>.</p>
+    {% else %}
+    <div class="empty-block">
+      <h2 class="h3">Projects are on their way</h2>
+      <p>We are adding photos of completed work. In the meantime, ask us for examples close to what you are planning.</p>
+      <a class="btn btn--primary" href="{% url 'inquiries:contact' %}">Ask for examples</a>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

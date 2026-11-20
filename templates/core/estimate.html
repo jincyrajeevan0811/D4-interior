@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %}Construction and interior cost estimator | {{ site.company_name }}{% endblock %}
+{% block meta_description %}Get an indicative cost range for building, interiors or renovation based on your area and finish level.{% endblock %}
+{% block content %}
+<header class="page-head">
+  <div class="wrap">
+    <h1 class="display display--page">Cost estimator</h1>
+    <p class="lede">An indicative range based on built-up area and finish level. We confirm the real figure after a site visit and an itemised quote.</p>
+  </div>
+</header>
+
+<section class="section section--flush-top">
+  <div class="wrap estimator" data-estimator>
+    {{ rates|json_script:"estimator-rates" }}
+    <form class="estimator__form" action="{% url 'inquiries:quote' %}" method="get" id="estimator-form" data-estimator-form>
+      <fieldset class="field">
+        <legend>What do you need?</legend>
+        <div class="choice-row">
+          {% for value, label in kinds %}
+          <label class="choice">
+            <input type="radio" name="service" value="{{ value }}" {% if forloop.first %}checked{% endif %}>
+            <span>{{ label }}</span>
+          </label>
+          {% endfor %}
+        </div>
+      </fieldset>
+
+      <div class="field">
+        <label for="est-building">Type of building</label>
+        <select id="est-building" name="building">
+          {% for value, label in building_types %}<option value="{{ value }}">{{ label }}</option>{% endfor %}
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="est-area">Built-up area</label>
+        <div class="area-input">
+          <input type="range" id="est-area-range" min="300" max="20000" step="50" value="2000" aria-label="Built-up area slider" data-area-range>
+          <div class="area-input__num">
+            <input type="number" id="est-area" name="area" min="100" max="200000" step="10" value="2000" inputmode="numeric" data-area-num>
+            <span>sq ft</span>
+          </div>
+        </div>
+        <p class="hint" data-area-hint>Roughly a 3 bedroom home.</p>
+      </div>
+
+      <div class="field" data-floors-field>
+        <label for="est-floors">Floors</label>
+        <select id="est-floors" name="floors">
+          <option value="1">Ground only</option>
+          <option value="2" selected>G+1</option>
+          <option value="3">G+2</option>
+          <option value="4">G+3</option>
+          <option value="5">G+4 or more</option>
+        </select>
+      </div>
+
+      <fieldset class="field">
+        <legend>Finish level</legend>
+        <div class="tier-row">
+          {% for value, label in tiers %}
+          <label class="tier">
+            <input type="radio" name="tier" value="{{ value }}" {% if value == "premium" %}checked{% endif %}>
+            <span class="tier__card"><b>{{ label }}</b><small data-tier-note="{{ value }}"></small></span>
+          </label>
+          {% endfor %}
+        </div>
+      </fieldset>
+      <input type="hidden" name="low" data-out-low>
+      <input type="hidden" name="high" data-out-high>
+    </form>
+
+    <aside class="estimator__result" aria-live="polite">
+      <p class="estimator__label">Indicative cost</p>
+      <p class="estimator__figure" data-out-range>Choose your options</p>
+      <div class="dim dim--light" aria-hidden="true"><span data-out-area>2,000 sq ft</span></div>
+      <p class="estimator__rate" data-out-rate></p>
+      <ul class="estimator__notes">
+        <li>Includes materials, labour and supervision for the chosen scope.</li>
+        <li>Excludes land, government fees and loose furniture unless agreed.</li>
+        <li>Soil type, site access and design changes can move the final figure.</li>
+      </ul>
+      <button class="btn btn--tape btn--block" type="submit" form="estimator-form">Get an exact quote</button>
+      <p class="estimator__small">Your choices carry over to the quote form.</p>
+    </aside>
+  </div>
+</section>
+{% endblock %}

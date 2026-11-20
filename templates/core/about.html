@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load d4 %}
+{% block title %}About us | {{ site.company_name }}{% endblock %}
+{% block content %}
+<header class="page-head">
+  <div class="wrap">
+    <h1 class="display display--page">One team, from the first survey to the last coat of paint.</h1>
+    <p class="lede">{{ site.tagline }}</p>
+  </div>
+</header>
+
+<section class="section">
+  <div class="wrap about-grid">
+    <div class="prose">
+      {% if site.about_story %}
+        {{ site.about_story|linebreaks }}
+      {% else %}
+        <p>{{ site.company_name }} is a team of engineers, architects, interior designers and site supervisors who take on a project as a whole. We plan it, build it, finish it and hand it over, so you deal with one company instead of five.</p>
+        <p>We build homes and villas, hospitals and clinics, offices, shops and other commercial buildings. We also design interiors for spaces built by others, and renovate or rebuild older structures.</p>
+      {% endif %}
+    </div>
+    {% if site.has_stats %}
+    <dl class="fact-list">
+      {% if site.years_experience %}<div><dt>Years building</dt><dd>{{ site.years_experience }}</dd></div>{% endif %}
+      {% if site.projects_completed %}<div><dt>Projects handed over</dt><dd>{{ site.projects_completed }}</dd></div>{% endif %}
+      {% if site.sqft_delivered %}<div><dt>Square feet built</dt><dd>{{ site.sqft_delivered|compact_sqft }}</dd></div>{% endif %}
+      {% if site.cities_served %}<div><dt>Towns and cities</dt><dd>{{ site.cities_served }}</dd></div>{% endif %}
+    </dl>
+    {% endif %}
+  </div>
+</section>
+
+<section class="section section--tint">
+  <div class="wrap">
+    <h2 class="h2">How we work with you</h2>
+    <div class="principles">
+      <div><h3>One contract</h3><p>Design, approvals support, civil work, electrical, plumbing and interiors sit under one agreement with one project manager.</p></div>
+      <div><h3>Stage-wise billing</h3><p>You pay as each stage is completed and checked, never far ahead of the work on site.</p></div>
+      <div><h3>Weekly site updates</h3><p>Photos and progress notes every week, so you know where things stand even when you can't visit.</p></div>
+      <div><h3>Checked at every stage</h3><p>Foundation, structure, services and finishes are inspected before the next stage begins.</p></div>
+    </div>
+  </div>
+</section>
+
+{% include "partials/process.html" %}
+{% endblock %}

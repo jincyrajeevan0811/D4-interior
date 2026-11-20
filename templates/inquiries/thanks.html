@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Request sent | {{ site.company_name }}{% endblock %}
+{% block final_cta %}{% endblock %}
+{% block content %}
+<section class="section thanks">
+  <div class="wrap thanks__inner">
+    <svg class="thanks__mark" viewBox="0 0 80 80" aria-hidden="true">
+      <circle cx="40" cy="40" r="36" fill="none" stroke="#E8B931" stroke-width="4"/>
+      <path d="M24 41l11 11 21-24" fill="none" stroke="#1F2A2E" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <h1 class="display display--page">Request sent{% if first_name %}, {{ first_name }}{% endif %}.</h1>
+    <p class="lede">We have your project details. Someone from our team will call you within one working day to plan a site visit.</p>
+    <div class="btn-row">
+      <a class="btn btn--primary" href="{% url 'portfolio:list' %}">Browse our projects</a>
+      <a class="btn btn--line" href="{% url 'core:home' %}">Back to the home page</a>
+    </div>
+  </div>
+</section>
+{% endblock %}
